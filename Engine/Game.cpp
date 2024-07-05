@@ -1,5 +1,5 @@
-/****************************************************************************************** 
- *	Chili DirectX Framework Version 16.07.20											  *	
+/******************************************************************************************
+ *	Chili DirectX Framework Version 16.07.20											  *
  *	Game.cpp																			  *
  *	Copyright 2016 PlanetChili.net <http://www.planetchili.net>							  *
  *																						  *
@@ -21,16 +21,16 @@
 #include "MainWindow.h"
 #include "Game.h"
 
-Game::Game( MainWindow& wnd )
+Game::Game(MainWindow& wnd)
 	:
-	wnd( wnd ),
-	gfx( wnd )
+	wnd(wnd),
+	gfx(wnd)
 {
 }
 
 void Game::Go()
 {
-	gfx.BeginFrame();	
+	gfx.BeginFrame();
 	UpdateModel();
 	ComposeFrame();
 	gfx.EndFrame();

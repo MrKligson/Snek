@@ -1,5 +1,5 @@
-/****************************************************************************************** 
- *	Chili DirectX Framework Version 16.07.20											  *	
+/******************************************************************************************
+ *	Chili DirectX Framework Version 16.07.20											  *
  *	Keyboard.h																			  *
  *	Copyright 2016 PlanetChili.net <http://www.planetchili.net>							  *
  *																						  *
@@ -41,14 +41,16 @@ public:
 	public:
 		Event()
 			:
-			type( Type::Invalid ),
-			code( 0u )
-		{}
-		Event( Type type,unsigned char code )
+			type(Type::Invalid),
+			code(0u)
+		{
+		}
+		Event(Type type, unsigned char code)
 			:
-			type( type ),
-			code( code )
-		{}
+			type(type),
+			code(code)
+		{
+		}
 		bool IsPress() const
 		{
 			return type == Type::Press;
@@ -68,9 +70,9 @@ public:
 	};
 public:
 	Keyboard() = default;
-	Keyboard( const Keyboard& ) = delete;
-	Keyboard& operator=( const Keyboard& ) = delete;
-	bool KeyIsPressed( unsigned char keycode ) const;
+	Keyboard(const Keyboard&) = delete;
+	Keyboard& operator=(const Keyboard&) = delete;
+	bool KeyIsPressed(unsigned char keycode) const;
 	Event ReadKey();
 	bool KeyIsEmpty() const;
 	char ReadChar();
@@ -82,12 +84,12 @@ public:
 	void DisableAutorepeat();
 	bool AutorepeatIsEnabled() const;
 private:
-	void OnKeyPressed( unsigned char keycode );
-	void OnKeyReleased( unsigned char keycode );
-	void OnChar( char character );
+	void OnKeyPressed(unsigned char keycode);
+	void OnKeyReleased(unsigned char keycode);
+	void OnChar(char character);
 	void ClearState();
 	template<typename T>
-	void TrimBuffer( std::queue<T>& buffer );
+	void TrimBuffer(std::queue<T>& buffer);
 private:
 	static constexpr unsigned int nKeys = 256u;
 	static constexpr unsigned int bufferSize = 4u;
