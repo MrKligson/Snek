@@ -26,7 +26,7 @@ private:
 	
 public:
 	Snake(Keyboard& kbd, Location head);
-	bool WillMove();
+	bool IsNotMoving();
 	void Move();
 	Location GetNextHeadLocation() const;
 	bool IsInLocation(const Location& l, int skipNTailSegments) const;

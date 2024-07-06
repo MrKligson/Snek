@@ -40,7 +40,7 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-	if (gameOver || !snek.WillMove()) {
+	if (gameOver || snek.IsNotMoving()) {
 		return;
 	}
 

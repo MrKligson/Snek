@@ -21,16 +21,16 @@ Snake::Snake(Keyboard& kbd, Location head)
 	}
 }
 
-bool Snake::WillMove()
+bool Snake::IsNotMoving()
 {
 	moveCounter++;
 	if (nSegments == nSegmentsMax || moveCounter < movePeriod) {
-		return false;
+		return true;
 	}
 
 	moveCounter = 0;
 	HandleInput();
-	return true;
+	return false;
 }
 
 void Snake::Move()
