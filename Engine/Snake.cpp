@@ -8,6 +8,7 @@ Snake::Snake(Keyboard& kbd, Location head)
 	kbd.DisableAutorepeat();
 
 	segments[0].InitHead(head);
+	nextHeadLocation = segments[0].GetLocation() + moveDelta;
 
 	Color bodycolors[] = {
 		{ 159, 230, 77 },
@@ -30,6 +31,7 @@ bool Snake::WillMove()
 
 	moveCounter = 0;
 	HandleInput();
+	nextHeadLocation = segments[0].GetLocation() + moveDelta;
 	return true;
 }
 
@@ -47,12 +49,17 @@ void Snake::Move()
 
 Location Snake::GetNextHeadLocation() const
 {
-	return segments[0].GetLocation() + moveDelta;
+	return nextHeadLocation;
 }
 
-bool Snake::IsHeadAt(const Location& l) const
+bool Snake::IsInLocation(const Location& l, int skipNTailSegments) const
 {
-	return segments[0].GetLocation() == l;
+	for (int i = 0; i < nSegments - skipNTailSegments; i++) {
+		if (segments[i].GetLocation() == l) {
+			return true;
+		}
+	}
+	return false;
 }
 
 bool Snake::Grow()
@@ -80,15 +87,19 @@ void Snake::HandleInput()
 		const UCHAR key = event.GetCode();
 		if (key == VK_UP && moveDelta.y != 1) {
 			moveDelta = { 0, -1 };
+			return;
 		}
-		else if (key == VK_DOWN && moveDelta.y != -1) {
+		if (key == VK_DOWN && moveDelta.y != -1) {
 			moveDelta = { 0, 1 };
+			return;
 		}
-		else if (key == VK_LEFT && moveDelta.x != 1) {
+		if (key == VK_LEFT && moveDelta.x != 1) {
 			moveDelta = { -1, 0 };
+			return;
 		}
-		else if (key == VK_RIGHT && moveDelta.x != -1) {
+		if (key == VK_RIGHT && moveDelta.x != -1) {
 			moveDelta = { 1, 0 };
+			return;
 		}
 	}
 }

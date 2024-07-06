@@ -29,7 +29,7 @@ public:
 	bool WillMove();
 	void Move();
 	Location GetNextHeadLocation() const;
-	bool IsHeadAt(const Location& l) const;
+	bool IsInLocation(const Location& l, int skipNTailSegments) const;
 	bool Grow();
 	void Draw(Board& brd) const;
 private:
@@ -43,5 +43,6 @@ private:
 	int moveCounter = 0;
 	static constexpr int movePeriod = 20;
 	Location moveDelta = { 0, 1 };
+	Location nextHeadLocation;
 	Keyboard& kbd;
 };
