@@ -45,8 +45,7 @@ void Game::UpdateModel()
 	}
 
 	Location next = snek.GetNextHeadLocation();
-	if (!brd.IsValid(next) || snek.IsInLocation(next, 1)
-	) {
+	if (!brd.IsValid(next) || snek.IsInLocation(next, 1)) {
 		gameOver = true;
 		return;
 	}
