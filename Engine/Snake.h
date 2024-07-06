@@ -43,6 +43,5 @@ private:
 	int moveCounter = 0;
 	static constexpr int movePeriod = 20;
 	Location moveDelta = { 0, 1 };
-	Location nextHeadLocation;
 	Keyboard& kbd;
 };

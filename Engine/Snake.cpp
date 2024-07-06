@@ -8,7 +8,6 @@ Snake::Snake(Keyboard& kbd, Location head)
 	kbd.DisableAutorepeat();
 
 	segments[0].InitHead(head);
-	nextHeadLocation = segments[0].GetLocation() + moveDelta;
 
 	Color bodycolors[] = {
 		{ 159, 230, 77 },
@@ -31,7 +30,6 @@ bool Snake::WillMove()
 
 	moveCounter = 0;
 	HandleInput();
-	nextHeadLocation = segments[0].GetLocation() + moveDelta;
 	return true;
 }
 
@@ -49,7 +47,7 @@ void Snake::Move()
 
 Location Snake::GetNextHeadLocation() const
 {
-	return nextHeadLocation;
+	return segments[0].GetLocation() + moveDelta;
 }
 
 bool Snake::IsInLocation(const Location& l, int skipNTailSegments) const
