@@ -43,5 +43,4 @@ void Game::UpdateModel()
 
 void Game::ComposeFrame()
 {
-	brd.TestDrawing(0);
 }
