@@ -70,9 +70,10 @@ bool Snake::Grow()
 
 void Snake::Draw(Board& brd) const
 {
-	for (int i = 0; i < nSegments; i++) {
+	for (int i = 1; i < nSegments; i++) {
 		segments[i].Draw(brd);
 	}
+	segments[0].Draw(brd);
 }
 
 void Snake::HandleInput()
