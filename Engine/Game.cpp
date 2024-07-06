@@ -45,9 +45,15 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-	if (gameOver) {
+	if (!gameStarted) {
 		return;
 	}
+
+	if (gameOver) {
+		snek.RotateColors();
+		return;
+	}
+
 	if (snek.IsNotMoving()) {
 		return;
 	}
@@ -71,7 +77,17 @@ void Game::UpdateModel()
 
 void Game::ComposeFrame()
 {
+	if (!gameStarted) {
+		SpriteCodex::DrawTitle(titleScreen.x, titleScreen.y, gfx);
+		return;
+	}
+
 	brd.DrawBorders();
-	target.Draw(brd);
 	snek.Draw(brd);
+	if (!gameOver) {
+		target.Draw(brd);
+	}
+	else {
+		SpriteCodex::DrawGameOver(gameOverScreen.x, gameOverScreen.y, gfx);
+	}
 }

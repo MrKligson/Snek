@@ -26,6 +26,7 @@
 #include "Board.h"
 #include "Snake.h"
 #include "Target.h"
+#include "SpriteCodex.h"
 #include <random>
 
 class Game
@@ -53,5 +54,14 @@ private:
 	Board brd;
 	Snake snek;
 	Target target;
+	bool gameStarted = false;
 	bool gameOver = false;
+	Location titleScreen = {
+		(Graphics::ScreenWidth - SpriteCodex::titleWidth) / 2,
+		(Graphics::ScreenHeight - SpriteCodex::titleHeight) / 2
+	};
+	Location gameOverScreen = {
+		(Graphics::ScreenWidth - SpriteCodex::gameOverWidth) / 2,
+		(Graphics::ScreenHeight - SpriteCodex::gameOverHeight) / 2
+	};
 };
