@@ -16,9 +16,10 @@ private:
 
 public:
 	Board(Graphics& gfx);
+	bool IsValid(const Location& l);
 	void DrawBorders();
 	void DrawCell(Location l, int padding, Color c);
-	void TestDrawing(int padding);
+	//void TestDrawing(int padding);
 	
 public:
 	static constexpr int rows = 25;

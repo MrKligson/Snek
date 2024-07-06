@@ -20,6 +20,11 @@ Board::Board(Graphics& gfx)
 	borders[3] = { x, y + borderWidth + height, width + 2 * borderWidth, borderWidth };
 }
 
+bool Board::IsValid(const Location& l)
+{
+	return l.x < cols && l.y < rows;
+}
+
 void Board::DrawBorders()
 {
 	for each (Border b in borders) {
@@ -43,14 +48,14 @@ void Board::DrawCell(Location l, int padding, Color c)
 	);
 }
 
-void Board::TestDrawing(int padding) // Draw borders and grid in same color
-{
-	DrawBorders();
-
-	Location l = { 0,0 };
-	for (l.y = 0; l.y < rows; l.y++) {
-		for (l.x = 0; l.x < cols; l.x++) {
-			DrawCell(l, padding, borderColor);
-		}
-	}
-}
+//void Board::TestDrawing(int padding) // Draw borders and grid in same color
+//{
+//	DrawBorders();
+//
+//	Location l = { 0,0 };
+//	for (l.y = 0; l.y < rows; l.y++) {
+//		for (l.x = 0; l.x < cols; l.x++) {
+//			DrawCell(l, padding, borderColor);
+//		}
+//	}
+//}
