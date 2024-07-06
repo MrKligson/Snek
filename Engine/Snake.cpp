@@ -63,8 +63,8 @@ bool Snake::Grow()
 
 void Snake::Draw(Board& brd) const
 {
-	for each (Segment s in segments) {
-		s.Draw(brd);
+	for (int i = 0; i < nSegments; i++) {
+		segments[i].Draw(brd);
 	}
 }
 
