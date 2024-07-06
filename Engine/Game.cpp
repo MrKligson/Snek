@@ -25,7 +25,8 @@ Game::Game(MainWindow& wnd)
 	:
 	wnd(wnd),
 	gfx(wnd),
-	brd(gfx)
+	brd(gfx),
+	snek(wnd.kbd, { Board::cols / 2, Board::rows / 2 })
 {
 }
 
@@ -39,8 +40,26 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
+	if (gameOver || !snek.WillMove()) {
+		return;
+	}
+
+	gameOver = !brd.IsValid(snek.GetNextHeadLocation())
+		|| snek.IsInLocation(snek.GetNextHeadLocation(), 1);
+
+	if (gameOver) {
+		return;
+	}
+
+	snek.Move();
+
+	if (wnd.kbd.KeyIsPressed(VK_CONTROL)) {
+		snek.Grow();
+	}
 }
 
 void Game::ComposeFrame()
 {
+	brd.DrawBorders();
+	snek.Draw(brd);
 }
