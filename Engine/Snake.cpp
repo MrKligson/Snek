@@ -76,18 +76,19 @@ void Snake::Draw(Board& brd) const
 
 void Snake::RotateColors()
 {
+	if (nSegments < nSegmentsMax) {
+		// lost, not won... No partylights!
+		return;
+	}
+
 	moveCounter++;
 	if (!(moveCounter % 5)) {
 		return;
 	}
 
-	const Color first = segments[1].GetColor();
-	const int last = nSegments == nSegmentsMax ? nSegments - 1 : nSegments;
-
-	for (int i = 1; i < last; i++) {
-		segments[i].SetColor(segments[i + 1].GetColor());
+	for (int i = 2; i < nSegments; i++) {
+		segments[i].SetColor(segments[i - 1].GetColor());
 	}
-	segments[last].SetColor(first);
 }
 
 void Snake::HandleInput()
