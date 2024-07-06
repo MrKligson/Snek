@@ -5,6 +5,8 @@ Snake::Snake(Keyboard& kbd, Location head)
 	:
 	kbd(kbd)
 {
+	kbd.DisableAutorepeat();
+
 	segments[0].InitHead(head);
 
 	Color bodycolors[] = {
