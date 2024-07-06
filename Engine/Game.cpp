@@ -44,10 +44,10 @@ void Game::UpdateModel()
 		return;
 	}
 
-	gameOver = !brd.IsValid(snek.GetNextHeadLocation())
-		|| snek.IsInLocation(snek.GetNextHeadLocation(), 1);
-
-	if (gameOver) {
+	Location next = snek.GetNextHeadLocation();
+	if (!brd.IsValid(next) || snek.IsInLocation(next, 1)
+	) {
+		gameOver = true;
 		return;
 	}
 
