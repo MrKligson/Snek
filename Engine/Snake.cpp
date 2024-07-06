@@ -74,6 +74,22 @@ void Snake::Draw(Board& brd) const
 	segments[0].Draw(brd);
 }
 
+void Snake::RotateColors()
+{
+	moveCounter++;
+	if (!(moveCounter % 5)) {
+		return;
+	}
+
+	const Color first = segments[1].GetColor();
+	const int last = nSegments == nSegmentsMax ? nSegments - 1 : nSegments;
+
+	for (int i = 1; i < last; i++) {
+		segments[i].SetColor(segments[i + 1].GetColor());
+	}
+	segments[last].SetColor(first);
+}
+
 void Snake::HandleInput()
 {
 	while (!kbd.KeyIsEmpty()) {
@@ -135,6 +151,18 @@ void Snake::Segment::Draw(Board& brd) const
 {
 	assert(isInitialized);
 	brd.DrawCell(loc, padding, c);
+}
+
+void Snake::Segment::SetColor(Color c)
+{
+	assert(isInitialized);
+	this->c = c;
+}
+
+Color Snake::Segment::GetColor() const
+{
+	assert(isInitialized);
+	return c;
 }
 
 const Location& Snake::Segment::GetLocation() const

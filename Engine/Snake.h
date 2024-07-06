@@ -15,6 +15,8 @@ private:
 		void MoveBy(const Location& delta);
 		void Follow(const Segment& next);
 		void Draw(Board& brd) const;
+		void SetColor(Color c);
+		Color GetColor() const;
 		const Location& GetLocation() const;
 
 	private:
@@ -32,6 +34,7 @@ public:
 	bool IsInLocation(const Location& l, int skipNTailSegments) const;
 	bool Grow();
 	void Draw(Board& brd) const;
+	void RotateColors();
 private:
 	void HandleInput();
 
