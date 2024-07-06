@@ -25,6 +25,8 @@
 #include "Graphics.h"
 #include "Board.h"
 #include "Snake.h"
+#include "Target.h"
+#include <random>
 
 class Game
 {
@@ -45,7 +47,11 @@ private:
 	/********************************/
 	/*  User Variables              */
 	/********************************/
+	std::mt19937 rng;
+	std::uniform_int_distribution<int> vdist;
+	std::uniform_int_distribution<int> hdist;
 	Board brd;
 	Snake snek;
+	Target target;
 	bool gameOver = false;
 };

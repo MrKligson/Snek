@@ -25,9 +25,14 @@ Game::Game(MainWindow& wnd)
 	:
 	wnd(wnd),
 	gfx(wnd),
+	rng(std::random_device()()),
+	vdist(0, Board::cols - 1),
+	hdist(0, Board::rows - 1),
 	brd(gfx),
-	snek(wnd.kbd, { Board::cols / 2, Board::rows / 2 })
+	snek(wnd.kbd, { Board::cols / 2, Board::rows / 2 }),
+	target(rng, vdist, hdist)
 {
+	target.Respawn(snek);
 }
 
 void Game::Go()
@@ -40,7 +45,10 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-	if (gameOver || snek.IsNotMoving()) {
+	if (gameOver) {
+		return;
+	}
+	if (snek.IsNotMoving()) {
 		return;
 	}
 
@@ -52,13 +60,18 @@ void Game::UpdateModel()
 
 	snek.Move();
 
-	if (wnd.kbd.KeyIsPressed(VK_CONTROL)) {
-		snek.Grow();
+	if (target.IsAt(next)) {
+		if (!snek.Grow()) {	// board is full
+			gameOver = true;
+			return;
+		}
+		target.Respawn(snek);
 	}
 }
 
 void Game::ComposeFrame()
 {
 	brd.DrawBorders();
+	target.Draw(brd);
 	snek.Draw(brd);
 }
