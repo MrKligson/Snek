@@ -1,5 +1,5 @@
-/****************************************************************************************** 
- *	Chili DirectX Framework Version 16.07.20											  *	
+/******************************************************************************************
+ *	Chili DirectX Framework Version 16.07.20											  *
  *	Game.h																				  *
  *	Copyright 2016 PlanetChili.net <http://www.planetchili.net>							  *
  *																						  *
@@ -23,17 +23,24 @@
 #include "Keyboard.h"
 #include "Mouse.h"
 #include "Graphics.h"
+#include "Board.h"
+#include "Snake.h"
+#include "Target.h"
+#include "SpriteCodex.h"
+#include <random>
 
 class Game
 {
+private:
+	enum States {Waiting, Started, GameOver, Won};
 public:
-	Game( class MainWindow& wnd );
-	Game( const Game& ) = delete;
-	Game& operator=( const Game& ) = delete;
+	Game(class MainWindow& wnd);
+	Game(const Game&) = delete;
+	Game& operator=(const Game&) = delete;
 	void Go();
 private:
-	void ComposeFrame();
 	void UpdateModel();
+	void ComposeFrame();
 	/********************************/
 	/*  User Functions              */
 	/********************************/
@@ -43,4 +50,17 @@ private:
 	/********************************/
 	/*  User Variables              */
 	/********************************/
+	std::mt19937 rng;
+	Board brd;
+	Snake snek;
+	Target target;
+	States state = Waiting;
+	Location titleScreen = {
+		(Graphics::ScreenWidth - SpriteCodex::titleWidth) / 2,
+		(Graphics::ScreenHeight - SpriteCodex::titleHeight) / 2
+	};
+	Location gameOverScreen = {
+		(Graphics::ScreenWidth - SpriteCodex::gameOverWidth) / 2,
+		(Graphics::ScreenHeight - SpriteCodex::gameOverHeight) / 2
+	};
 };

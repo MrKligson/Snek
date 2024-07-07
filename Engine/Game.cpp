@@ -1,5 +1,5 @@
-/****************************************************************************************** 
- *	Chili DirectX Framework Version 16.07.20											  *	
+/******************************************************************************************
+ *	Chili DirectX Framework Version 16.07.20											  *
  *	Game.cpp																			  *
  *	Copyright 2016 PlanetChili.net <http://www.planetchili.net>							  *
  *																						  *
@@ -21,16 +21,21 @@
 #include "MainWindow.h"
 #include "Game.h"
 
-Game::Game( MainWindow& wnd )
+Game::Game(MainWindow& wnd)
 	:
-	wnd( wnd ),
-	gfx( wnd )
+	wnd(wnd),
+	gfx(wnd),
+	rng(std::random_device()()),
+	brd(gfx),
+	snek(wnd.kbd, brd),
+	target(rng, brd)
 {
+	target.Respawn(snek, brd);
 }
 
 void Game::Go()
 {
-	gfx.BeginFrame();	
+	gfx.BeginFrame();
 	UpdateModel();
 	ComposeFrame();
 	gfx.EndFrame();
@@ -38,8 +43,56 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
+	state = Game::Won;
+
+	switch (state) {
+	case Game::Started:
+		break;
+	case Game::Waiting:
+		if (wnd.kbd.KeyIsPressed(VK_RETURN)) {
+			state = Started;
+			wnd.kbd.Flush();
+		}
+		return;
+	case Game::Won:
+		snek.RotateColors();
+	case Game::GameOver:
+		return;
+	default:
+		break;
+	}
+
+	if (!snek.IsPreparingToMove()) {
+		return;
+	}
+
+	if (!snek.Move(brd)) {
+		state = Game::GameOver;
+		return;
+	}
+
+	if (target.IsAt(snek.GetHeadLocation())) {
+		snek.Grow();
+		if (!snek.CanGrow()) {
+			state = Game::Won;
+			return;
+		}
+		target.Respawn(snek, brd);
+	}
 }
 
 void Game::ComposeFrame()
 {
+	if (state == Game::Waiting) {
+		SpriteCodex::DrawTitle(titleScreen.x, titleScreen.y, gfx);
+		return;
+	}
+
+	brd.DrawBorders();
+	snek.Draw(brd);
+	target.Draw(brd);
+
+	if (state == Game::GameOver || state == Game::Won) {
+		SpriteCodex::DrawGameOver(gameOverScreen.x, gameOverScreen.y, gfx);
+	}
 }
