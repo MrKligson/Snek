@@ -48,10 +48,9 @@ void Game::UpdateModel()
 	if (!gameStarted) {
 		if (wnd.kbd.KeyIsPressed(VK_RETURN)) {
 			gameStarted = true;
+			wnd.kbd.Flush();
 		}
-		else {
-			return;
-		}
+		return;
 	}
 
 	if (gameOver) {
