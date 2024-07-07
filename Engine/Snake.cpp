@@ -1,53 +1,58 @@
 #include "Snake.h"
 #include <assert.h>
 
-Snake::Snake(Keyboard& kbd, Location head)
+Snake::Snake(Keyboard& kbd, const Board& brd)
 	:
-	kbd(kbd)
+	kbd(kbd),
+	maxSegments(brd.Size()),
+	tailPrevious({ 0,0 })
 {
 	kbd.DisableAutorepeat();
 
-	segments[0].InitHead(head);
-
-	Color bodycolors[] = {
-		{ 159, 230, 77 },
-		{ 215, 230, 77 },
-		{ 159, 230, 77 },
-		{ 44, 253, 51 }
-	};
-
-	for (int i = 1; i < nSegmentsMax; i++) {
-		segments[i].InitBody(i % 2 + 2, bodycolors[i % 4]);
-	}
+	segments.reserve(maxSegments);
+	segments.push_back(Segment(Location(brd.GetCols() / 2, brd.GetRows() / 2)));
 }
 
-bool Snake::IsNotMoving()
+//Snake::Snake(Keyboard& kbd, const Board& brd, bool testSnake)
+//	: Snake(kbd, brd)
+//{
+//	segments[0].SetLocation({ 0,0 });
+//	const int xMax = brd.GetCols() - 1;
+//	for (int y = 0; y < brd.GetRows(); y++) {
+//		for (int x = 0; x < brd.GetCols(); x++) {
+//			if (x + y == 0) continue;
+//			tailPrevious = { y % 2 ? xMax - x : x, y};
+//			Grow();
+//		}
+//	}
+//}
+
+bool Snake::IsPreparingToMove()
 {
 	moveCounter++;
-	if (nSegments == nSegmentsMax || moveCounter < movePeriod) {
-		return true;
+	if (moveCounter < movePeriod) {
+		return false;
 	}
 
 	moveCounter = 0;
-	HandleInput();
-	return false;
+	return true;
 }
 
 bool Snake::Move(const Board& brd)
 {
-	if (nSegments >= nSegmentsMax) {
-		return false;
-	}
+	HandleInput();
 
 	const Location next = segments[0].GetLocation() + moveDelta;
 	if (!brd.IsValid(next)) {
 		return false;
 	}
 
+	tailPrevious = segments.back().GetLocation();
+
 	bool alive = true;
-	for (int i = nSegments; i > 0; i--) {
+	for (size_t i = segments.size() - 1; i > 0; i--) {
 		segments[i].Follow(segments[i - 1]);
-		if (alive && nSegments > 3 && i < nSegments) {
+		if (alive && segments.size() > 3 && i < segments.size()) {
 			alive = segments[i].GetLocation() != next;
 		}
 	}
@@ -60,9 +65,9 @@ Location Snake::GetHeadLocation() const
 	return segments[0].GetLocation();
 }
 
-bool Snake::IsInLocation(const Location& l, int skipNTailSegments) const
+bool Snake::IsInLocation(const Location& l, int tailSegmentsToSkip) const
 {
-	for (int i = 0; i < nSegments - skipNTailSegments; i++) {
+	for (size_t i = 0; i < segments.size() - tailSegmentsToSkip; i++) {
 		if (segments[i].GetLocation() == l) {
 			return true;
 		}
@@ -70,15 +75,25 @@ bool Snake::IsInLocation(const Location& l, int skipNTailSegments) const
 	return false;
 }
 
-bool Snake::Grow()
+void Snake::Grow()
 {
-	nSegments++;
-	return nSegments < nSegmentsMax;
+	const size_t i = segments.size();
+	segments.push_back(Segment(tailPrevious, 2 + i % 2, bodycolors[i % 4]));
+}
+
+bool Snake::CanGrow() const
+{
+	return segments.size() < maxSegments;
+}
+
+size_t Snake::Size()
+{
+	return segments.size();
 }
 
 void Snake::Draw(Board& brd) const
 {
-	for (int i = 1; i < nSegments; i++) {
+	for (size_t i = 1; i < segments.size(); i++) {
 		segments[i].Draw(brd);
 	}
 	segments[0].Draw(brd);
@@ -86,19 +101,16 @@ void Snake::Draw(Board& brd) const
 
 void Snake::RotateColors()
 {
-	if (nSegments < nSegmentsMax) {
-		// lost, not won... No partylights!
-		return;
-	}
-
 	moveCounter++;
-	if (!(moveCounter % 5)) {
+	if (moveCounter % 5) {
 		return;
 	}
 
-	for (int i = 2; i < nSegments; i++) {
-		segments[i].SetColor(segments[i - 1].GetColor());
+	size_t i;
+	for (i = 2; i < segments.size(); i++) {
+		segments[i - 1].SetColor(segments[i].GetColor());
 	}
+	segments[i - 1].SetColor(segments[1].GetColor());
 }
 
 void Snake::HandleInput()
@@ -130,54 +142,52 @@ void Snake::HandleInput()
 	}
 }
 
-void Snake::Segment::InitHead(const Location& l)
+Snake::Segment::Segment(const Location& l)
+	:
+	loc(l),
+	c(Snake::headColor)
 {
-	assert(isInitialized == false);
-	c = Snake::headColor;
-	loc = l;
-	isInitialized = true;
 }
 
-void Snake::Segment::InitBody(int padding, Color c)
+Snake::Segment::Segment(const Location& l, int padding, Color c)
+	:
+	loc(l),
+	c(c),
+	padding(padding)
 {
-	assert(isInitialized == false);
-	this->c = c;
-	this->padding = padding;
-	isInitialized = true;
 }
 
 void Snake::Segment::MoveBy(const Location& delta)
 {
-	assert(isInitialized);
 	loc = loc + delta;
 }
 
 void Snake::Segment::Follow(const Segment& next)
 {
-	assert(isInitialized);
 	loc = next.GetLocation();
 }
 
 void Snake::Segment::Draw(Board& brd) const
 {
-	assert(isInitialized);
 	brd.DrawCell(loc, padding, c);
 }
 
 void Snake::Segment::SetColor(Color c)
 {
-	assert(isInitialized);
 	this->c = c;
 }
 
 Color Snake::Segment::GetColor() const
 {
-	assert(isInitialized);
 	return c;
 }
 
 const Location& Snake::Segment::GetLocation() const
 {
-	assert(isInitialized);
 	return loc;
+}
+
+void Snake::Segment::SetLocation(const Location& l)
+{
+	loc = l;
 }

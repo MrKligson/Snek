@@ -27,7 +27,7 @@ Game::Game(MainWindow& wnd)
 	gfx(wnd),
 	rng(std::random_device()()),
 	brd(gfx),
-	snek(wnd.kbd, { brd.GetCols() / 2, brd.GetRows() / 2 }),
+	snek(wnd.kbd, brd),
 	target(rng, brd)
 {
 	target.Respawn(snek, brd);
@@ -43,42 +43,47 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-	if (!gameStarted) {
+	state = Game::Won;
+
+	switch (state) {
+	case Game::Started:
+		break;
+	case Game::Waiting:
 		if (wnd.kbd.KeyIsPressed(VK_RETURN)) {
-			gameStarted = true;
+			state = Started;
 			wnd.kbd.Flush();
 		}
 		return;
-	}
-
-	if (gameOver) {
+	case Game::Won:
 		snek.RotateColors();
+	case Game::GameOver:
 		return;
+	default:
+		break;
 	}
 
-	if (snek.IsNotMoving()) {
+	if (!snek.IsPreparingToMove()) {
 		return;
 	}
 
 	if (!snek.Move(brd)) {
-		// board is full or hit border or body
-		gameOver = true;
+		state = Game::GameOver;
 		return;
 	}
 
 	if (target.IsAt(snek.GetHeadLocation())) {
-		if (!snek.Grow()) {
-			// board is full
-			gameOver = true;
+		snek.Grow();
+		if (!snek.CanGrow()) {
+			state = Game::Won;
 			return;
 		}
-		target.Respawn(snek);
+		target.Respawn(snek, brd);
 	}
 }
 
 void Game::ComposeFrame()
 {
-	if (!gameStarted) {
+	if (state == Game::Waiting) {
 		SpriteCodex::DrawTitle(titleScreen.x, titleScreen.y, gfx);
 		return;
 	}
@@ -87,7 +92,7 @@ void Game::ComposeFrame()
 	snek.Draw(brd);
 	target.Draw(brd);
 
-	if (gameOver) {
+	if (state == Game::GameOver || state == Game::Won) {
 		SpriteCodex::DrawGameOver(gameOverScreen.x, gameOverScreen.y, gfx);
 	}
 }

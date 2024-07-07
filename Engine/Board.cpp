@@ -20,7 +20,7 @@ Board::Board(Graphics& gfx)
 	borders[3] = { x, y + borderWidth + height, width + 2 * borderWidth, borderWidth };
 }
 
-Board::Board(Graphics& gfx, int nTargets, std::mt19937& rng)
+Board::Board(Graphics& gfx, int nObstacles, std::mt19937& rng)
 	:
 	Board(gfx)
 {
@@ -30,15 +30,17 @@ Board::Board(Graphics& gfx, int nTargets, std::mt19937& rng)
 	const Location excludeStart = { cols / 2 - 2, rows / 2 - 2 };
 	const Location excludeEnd = { cols / 2 + 2, rows / 2 + 2 };
 
-	for (int i = 0; i < nTargets; i++) {
+	for (int i = 0; i < nObstacles; i++) {
 		obstacles.push_back({ vdist(rng), hdist(rng) });
 
 		// make sure we dont spawn to close to the middle:
-		while (obstacles[i].x >= excludeStart.x && obstacles[i].x <= excludeEnd.x) {
+		while (obstacles[i].x >= excludeStart.x
+			&& obstacles[i].x <= excludeEnd.x) {
 			obstacles[i].x = vdist(rng);
 		}
-		while (obstacles[i].y >= excludeStart.y && obstacles[i].y <= excludeEnd.y) {
-			obstacles[i].y = vdist(rng);
+		while (obstacles[i].y >= excludeStart.y
+			&& obstacles[i].y <= excludeEnd.y) {
+			obstacles[i].y = hdist(rng);
 		}
 	}
 }
@@ -46,7 +48,7 @@ Board::Board(Graphics& gfx, int nTargets, std::mt19937& rng)
 bool Board::IsValid(const Location& l) const
 {
 	bool valid = l.x >= 0 && l.x < cols && l.y >= 0 && l.y < rows;
-	for each (auto obstacle in obstacles) {
+	for each (Location obstacle in obstacles) {
 		valid = obstacle != l;
 	}
 	return valid;
@@ -54,8 +56,16 @@ bool Board::IsValid(const Location& l) const
 
 void Board::DrawBorders()
 {
-	for each (Border b in borders) {
-		gfx.DrawRectDim(b.x, b.y, b.width, b.height, borderColor);
+	for each (Border border in borders) {
+		gfx.DrawRectDim(border.x, border.y,
+			border.width, border.height, borderColor);
+	}
+}
+
+void Board::DrawObstacles()
+{
+	for each (Location obstacle in obstacles) {
+		DrawCell(obstacle, 1, Colors::LightGray);
 	}
 }
 
@@ -70,9 +80,7 @@ void Board::DrawCell(Location l, int padding, Color c)
 	gfx.DrawRectDim(
 		l.x * cellSize + x + offset,
 		l.y * cellSize + y + offset,
-		drawSize,
-		drawSize,
-		c
+		drawSize, drawSize,	c
 	);
 }
 
@@ -86,9 +94,9 @@ int Board::GetRows() const
 	return rows;
 }
 
-int Board::GetObstacleAmount() const
+int Board::Size() const
 {
-	return obstacles.size();
+	return rows * cols - int(obstacles.size());
 }
 
 //void Board::TestDrawing(int padding) // Draw borders and grid in same color

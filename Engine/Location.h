@@ -2,8 +2,9 @@
 
 struct Location
 {
-	int x;
-	int y;
+	Location(int x, int y) : x(x), y(y) {}
+	int x = 0;
+	int y = 0;
 
 	bool operator==(const Location& rhs) const { return x == rhs.x && y == rhs.y; }
 	bool operator!=(const Location& rhs) const { return x != rhs.x || y != rhs.y; }

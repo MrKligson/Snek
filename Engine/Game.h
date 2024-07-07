@@ -31,6 +31,8 @@
 
 class Game
 {
+private:
+	enum States {Waiting, Started, GameOver, Won};
 public:
 	Game(class MainWindow& wnd);
 	Game(const Game&) = delete;
@@ -52,8 +54,7 @@ private:
 	Board brd;
 	Snake snek;
 	Target target;
-	bool gameStarted = false;
-	bool gameOver = false;
+	States state = Waiting;
 	Location titleScreen = {
 		(Graphics::ScreenWidth - SpriteCodex::titleWidth) / 2,
 		(Graphics::ScreenHeight - SpriteCodex::titleHeight) / 2

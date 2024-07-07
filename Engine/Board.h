@@ -21,14 +21,11 @@ public:
 	Board(Graphics& gfx, int nTargets, std::mt19937& rng);
 	bool IsValid(const Location& l) const;
 	void DrawBorders();
+	void DrawObstacles();
 	void DrawCell(Location l, int padding, Color c);
 	int GetCols() const;
 	int GetRows() const;
-	int GetObstacleAmount() const;
-	static constexpr int GetCellAmount()
-	{
-		return rows * cols;
-	}
+	int Size() const;
 	//void TestDrawing(int padding);
 
 	
