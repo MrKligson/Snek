@@ -20,9 +20,38 @@ Board::Board(Graphics& gfx)
 	borders[3] = { x, y + borderWidth + height, width + 2 * borderWidth, borderWidth };
 }
 
+Board::Board(Graphics& gfx, int nTargets, std::mt19937& rng,
+	         std::uniform_int_distribution<int>& vdist, std::uniform_int_distribution<int>& hdist)
+	:
+	Board(gfx)
+{
+	const Location excludeStart = { cols / 2 - 2, rows / 2 - 2 };
+	const Location excludeEnd = { cols / 2 + 2, rows / 2 + 2 };
+
+	for (int i = 0; i < nTargets; i++) {
+		obstacles.push_back({ vdist(rng), hdist(rng) });
+
+		// make sure we dont spawn to close to the middle:
+		while (obstacles[i].x >= excludeStart.x && obstacles[i].x <= excludeEnd.x) {
+			obstacles[i].x = vdist(rng);
+		}
+		while (obstacles[i].y >= excludeStart.y && obstacles[i].y <= excludeEnd.y) {
+			obstacles[i].y = vdist(rng);
+		}
+	}
+
+	hasObstacles = true;
+}
+
 bool Board::IsValid(const Location& l) const
 {
-	return l.x >=0 && l.x < cols && l.y >= 0 && l.y < rows;
+	bool valid = l.x >= 0 && l.x < cols && l.y >= 0 && l.y < rows;
+	if (valid && hasObstacles) {
+		for each (auto obstacle in obstacles) {
+			valid = obstacle != l;
+		}
+	}
+	return valid;
 }
 
 void Board::DrawBorders()
@@ -39,13 +68,22 @@ void Board::DrawCell(Location l, int padding, Color c)
 	assert(padding >= 0 && padding < cellSize);
 
 	const int drawSize = cellSize - padding * 2;
+	const int offset = cellOffset + padding;
 	gfx.DrawRectDim(
-		l.x * cellSize + x + cellOffset + padding,
-		l.y * cellSize + y + cellOffset + padding,
+		l.x * cellSize + x + offset,
+		l.y * cellSize + y + offset,
 		drawSize,
 		drawSize,
 		c
 	);
+}
+
+int Board::GetObstacleAmount() const
+{
+	if (!hasObstacles) {
+		return 0;
+	}
+	return obstacles.size();
 }
 
 //void Board::TestDrawing(int padding) // Draw borders and grid in same color
