@@ -27,12 +27,10 @@ Game::Game(MainWindow& wnd)
 	gfx(wnd),
 	rng(std::random_device()()),
 	brd(gfx),
-	vdist(0, brd.GetCols() - 1),
-	hdist(0, brd.GetRows() - 1),
 	snek(wnd.kbd, { brd.GetCols() / 2, brd.GetRows() / 2 }),
-	target(rng, vdist, hdist)
+	target(rng, brd)
 {
-	target.Respawn(snek);
+	target.Respawn(snek, brd);
 }
 
 void Game::Go()

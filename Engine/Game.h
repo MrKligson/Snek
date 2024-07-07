@@ -50,8 +50,6 @@ private:
 	/********************************/
 	std::mt19937 rng;
 	Board brd;
-	std::uniform_int_distribution<int> vdist;
-	std::uniform_int_distribution<int> hdist;
 	Snake snek;
 	Target target;
 	bool gameStarted = false;
