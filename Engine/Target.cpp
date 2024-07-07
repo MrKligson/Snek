@@ -12,7 +12,7 @@ void Target::Respawn(const Snake& snek, const Board& brd)
 {
 	do {
 		loc = { vdist(rng), hdist(rng) };
-	} while (snek.IsInLocation(loc, 0) && !brd.IsValid(loc));
+	} while (snek.IsInLocation(loc, 0) || !brd.IsValid(loc));
 }
 
 bool Target::IsAt(const Location& l) const
