@@ -40,7 +40,7 @@ private:
 
 private:
 	static constexpr Color headColor = Colors::Yellow;
-	static constexpr int nSegmentsMax = Board::cols * Board::rows;
+	static constexpr int nSegmentsMax = Board::GetCellAmount();
 	Segment segments[nSegmentsMax];
 	int nSegments = 1;
 	int moveCounter = 0;
