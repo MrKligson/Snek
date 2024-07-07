@@ -20,9 +20,9 @@ Board::Board(Graphics& gfx)
 	borders[3] = { x, y + borderWidth + height, width + 2 * borderWidth, borderWidth };
 }
 
-bool Board::IsValid(const Location& l)
+bool Board::IsValid(const Location& l) const
 {
-	return l.x < cols && l.y < rows;
+	return l.x >=0 && l.x < cols && l.y >= 0 && l.y < rows;
 }
 
 void Board::DrawBorders()

@@ -16,7 +16,7 @@ private:
 
 public:
 	Board(Graphics& gfx);
-	bool IsValid(const Location& l);
+	bool IsValid(const Location& l) const;
 	void DrawBorders();
 	void DrawCell(Location l, int padding, Color c);
 	//void TestDrawing(int padding);

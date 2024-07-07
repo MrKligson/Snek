@@ -46,7 +46,12 @@ void Game::Go()
 void Game::UpdateModel()
 {
 	if (!gameStarted) {
-		return;
+		if (wnd.kbd.KeyIsPressed(VK_RETURN)) {
+			gameStarted = true;
+		}
+		else {
+			return;
+		}
 	}
 
 	if (gameOver) {
@@ -58,16 +63,15 @@ void Game::UpdateModel()
 		return;
 	}
 
-	Location next = snek.GetNextHeadLocation();
-	if (!brd.IsValid(next) || snek.IsInLocation(next, 1)) {
+	if (!snek.Move(brd)) {
+		// board is full or hit border or body
 		gameOver = true;
 		return;
 	}
 
-	snek.Move();
-
-	if (target.IsAt(next)) {
-		if (!snek.Grow()) {	// board is full
+	if (target.IsAt(snek.GetHeadLocation())) {
+		if (!snek.Grow()) {
+			// board is full
 			gameOver = true;
 			return;
 		}
@@ -84,10 +88,9 @@ void Game::ComposeFrame()
 
 	brd.DrawBorders();
 	snek.Draw(brd);
-	if (!gameOver) {
-		target.Draw(brd);
-	}
-	else {
+	target.Draw(brd);
+
+	if (gameOver) {
 		SpriteCodex::DrawGameOver(gameOverScreen.x, gameOverScreen.y, gfx);
 	}
 }

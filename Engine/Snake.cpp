@@ -33,21 +33,31 @@ bool Snake::IsNotMoving()
 	return false;
 }
 
-void Snake::Move()
+bool Snake::Move(const Board& brd)
 {
 	if (nSegments >= nSegmentsMax) {
-		return;
+		return false;
 	}
 
+	const Location next = segments[0].GetLocation() + moveDelta;
+	if (!brd.IsValid(next)) {
+		return false;
+	}
+
+	bool alive = true;
 	for (int i = nSegments; i > 0; i--) {
 		segments[i].Follow(segments[i - 1]);
+		if (alive && nSegments > 3 && i < nSegments) {
+			alive = segments[i].GetLocation() != next;
+		}
 	}
 	segments[0].MoveBy(moveDelta);
+	return alive;
 }
 
-Location Snake::GetNextHeadLocation() const
+Location Snake::GetHeadLocation() const
 {
-	return segments[0].GetLocation() + moveDelta;
+	return segments[0].GetLocation();
 }
 
 bool Snake::IsInLocation(const Location& l, int skipNTailSegments) const
