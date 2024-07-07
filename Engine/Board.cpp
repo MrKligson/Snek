@@ -20,11 +20,13 @@ Board::Board(Graphics& gfx)
 	borders[3] = { x, y + borderWidth + height, width + 2 * borderWidth, borderWidth };
 }
 
-Board::Board(Graphics& gfx, int nTargets, std::mt19937& rng,
-	         std::uniform_int_distribution<int>& vdist, std::uniform_int_distribution<int>& hdist)
+Board::Board(Graphics& gfx, int nTargets, std::mt19937& rng)
 	:
 	Board(gfx)
 {
+	std::uniform_int_distribution<int> vdist(0, cols);
+	std::uniform_int_distribution<int> hdist(0, rows);
+
 	const Location excludeStart = { cols / 2 - 2, rows / 2 - 2 };
 	const Location excludeEnd = { cols / 2 + 2, rows / 2 + 2 };
 
@@ -39,17 +41,13 @@ Board::Board(Graphics& gfx, int nTargets, std::mt19937& rng,
 			obstacles[i].y = vdist(rng);
 		}
 	}
-
-	hasObstacles = true;
 }
 
 bool Board::IsValid(const Location& l) const
 {
 	bool valid = l.x >= 0 && l.x < cols && l.y >= 0 && l.y < rows;
-	if (valid && hasObstacles) {
-		for each (auto obstacle in obstacles) {
-			valid = obstacle != l;
-		}
+	for each (auto obstacle in obstacles) {
+		valid = obstacle != l;
 	}
 	return valid;
 }
@@ -78,11 +76,18 @@ void Board::DrawCell(Location l, int padding, Color c)
 	);
 }
 
+int Board::GetCols() const
+{
+	return cols;
+}
+
+int Board::GetRows() const
+{
+	return rows;
+}
+
 int Board::GetObstacleAmount() const
 {
-	if (!hasObstacles) {
-		return 0;
-	}
 	return obstacles.size();
 }
 

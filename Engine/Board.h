@@ -18,11 +18,12 @@ private:
 
 public:
 	Board(Graphics& gfx);
-	Board(Graphics& gfx, int nTargets, std::mt19937& rng,
-		std::uniform_int_distribution<int>& vdist, std::uniform_int_distribution<int>& hdist);
+	Board(Graphics& gfx, int nTargets, std::mt19937& rng);
 	bool IsValid(const Location& l) const;
 	void DrawBorders();
 	void DrawCell(Location l, int padding, Color c);
+	int GetCols() const;
+	int GetRows() const;
 	int GetObstacleAmount() const;
 	static constexpr int GetCellAmount()
 	{
@@ -35,7 +36,6 @@ private:
 	static constexpr int rows = 25;
 	static constexpr int cols = 35;
 	std::vector<Location> obstacles;
-	bool hasObstacles = false;
 	Graphics& gfx;
 	const int x;
 	const int y;

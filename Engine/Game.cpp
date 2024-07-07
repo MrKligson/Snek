@@ -26,10 +26,10 @@ Game::Game(MainWindow& wnd)
 	wnd(wnd),
 	gfx(wnd),
 	rng(std::random_device()()),
-	vdist(0, Board::cols - 1),
-	hdist(0, Board::rows - 1),
 	brd(gfx),
-	snek(wnd.kbd, { Board::cols / 2, Board::rows / 2 }),
+	vdist(0, brd.GetCols() - 1),
+	hdist(0, brd.GetRows() - 1),
+	snek(wnd.kbd, { brd.GetCols() / 2, brd.GetRows() / 2 }),
 	target(rng, vdist, hdist)
 {
 	target.Respawn(snek);
